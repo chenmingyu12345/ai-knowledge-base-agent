@@ -1,10 +1,37 @@
+import sys
+import os
+
+# 添加项目根目录到Python路径
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from config import OPENAI_API_KEY, MODEL_NAME, temperature
+import openai
+
 class LLM:
     def __init__(self):
-        # 使用简单的本地实现，避免下载大型模型
-        pass
+        # 初始化OpenAI客户端
+        openai.api_key = OPENAI_API_KEY
     
     def generate(self, prompt, max_new_tokens=500):
-        # 简单的模拟生成，实际项目中应使用真实的LLM
+        try:
+            # 使用OpenAI API生成回答
+            response = openai.ChatCompletion.create(
+                model=MODEL_NAME,
+                messages=[
+                    {"role": "system", "content": "你是一个AI技术知识库助手，专注于回答技术相关的问题。"},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_new_tokens,
+                temperature=temperature
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            # 如果API调用失败，使用备用的本地实现
+            print(f"OpenAI API调用失败: {str(e)}")
+            return self._local_generate(prompt, max_new_tokens)
+    
+    def _local_generate(self, prompt, max_new_tokens=500):
+        # 简单的模拟生成，作为备用方案
         # 尝试从prompt中提取问题和文档
         if "根据以下文档回答问题" in prompt:
             # 这是RAG的prompt，尝试提取文档和问题

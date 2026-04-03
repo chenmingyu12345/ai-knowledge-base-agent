@@ -10,13 +10,15 @@ import openai
 class LLM:
     def __init__(self):
         # 初始化DeepSeek客户端
-        openai.api_key = DEEPSEEK_API_KEY
-        openai.api_base = API_BASE_URL
+        self.client = openai.OpenAI(
+            api_key=DEEPSEEK_API_KEY,
+            base_url=API_BASE_URL
+        )
     
     def generate(self, prompt, max_new_tokens=500):
         try:
             # 使用DeepSeek API生成回答
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=[
                     {"role": "system", "content": "你是一个AI技术知识库助手，专注于回答技术相关的问题。"},

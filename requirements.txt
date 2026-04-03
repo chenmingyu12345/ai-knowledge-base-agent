@@ -5,3 +5,5 @@ fastapi
 streamlit
 uvicorn
 requests
+torch
+torchvision

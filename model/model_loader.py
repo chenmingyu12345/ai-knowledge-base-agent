@@ -4,17 +4,18 @@ import os
 # 添加项目根目录到Python路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import OPENAI_API_KEY, MODEL_NAME, temperature
+from config import DEEPSEEK_API_KEY, MODEL_NAME, temperature, API_BASE_URL
 import openai
 
 class LLM:
     def __init__(self):
-        # 初始化OpenAI客户端
-        openai.api_key = OPENAI_API_KEY
+        # 初始化DeepSeek客户端
+        openai.api_key = DEEPSEEK_API_KEY
+        openai.api_base = API_BASE_URL
     
     def generate(self, prompt, max_new_tokens=500):
         try:
-            # 使用OpenAI API生成回答
+            # 使用DeepSeek API生成回答
             response = openai.ChatCompletion.create(
                 model=MODEL_NAME,
                 messages=[
@@ -27,7 +28,7 @@ class LLM:
             return response.choices[0].message.content.strip()
         except Exception as e:
             # 如果API调用失败，使用备用的本地实现
-            print(f"OpenAI API调用失败: {str(e)}")
+            print(f"DeepSeek API调用失败: {str(e)}")
             return self._local_generate(prompt, max_new_tokens)
     
     def _local_generate(self, prompt, max_new_tokens=500):
